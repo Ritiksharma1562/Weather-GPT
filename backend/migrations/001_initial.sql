@@ -1,0 +1,30 @@
+-- PostgreSQL 15+ / Supabase. Executed transactionally by python -m app.migrate.
+CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE TABLE IF NOT EXISTS users (id varchar(36) PRIMARY KEY, created_at timestamptz NOT NULL, updated_at timestamptz NOT NULL, email varchar(320) NOT NULL UNIQUE, password_hash text, google_sub varchar(255) UNIQUE, display_name varchar(100) NOT NULL, avatar text, home_location json NOT NULL DEFAULT 'null');
+CREATE TABLE IF NOT EXISTS refresh_sessions (id varchar(36) PRIMARY KEY, created_at timestamptz NOT NULL, updated_at timestamptz NOT NULL, user_id varchar(36) NOT NULL REFERENCES users(id) ON DELETE CASCADE, token_hash varchar(64) NOT NULL UNIQUE, family varchar(36) NOT NULL, expires_at timestamptz NOT NULL, revoked boolean NOT NULL DEFAULT false);
+CREATE TABLE IF NOT EXISTS locations (id varchar(36) PRIMARY KEY, created_at timestamptz NOT NULL, updated_at timestamptz NOT NULL, user_id varchar(36) NOT NULL REFERENCES users(id) ON DELETE CASCADE, name varchar(150) NOT NULL, latitude double precision NOT NULL CHECK(latitude BETWEEN -90 AND 90), longitude double precision NOT NULL CHECK(longitude BETWEEN -180 AND 180), position integer NOT NULL DEFAULT 0, point geography(Point,4326) GENERATED ALWAYS AS (ST_SetSRID(ST_MakePoint(longitude, latitude),4326)::geography) STORED);
+CREATE TABLE IF NOT EXISTS weather_cache (id varchar(36) PRIMARY KEY, created_at timestamptz NOT NULL, updated_at timestamptz NOT NULL, cache_key varchar(128) NOT NULL UNIQUE, latitude double precision NOT NULL, longitude double precision NOT NULL, payload json NOT NULL, expires_at timestamptz NOT NULL, point geography(Point,4326) GENERATED ALWAYS AS (ST_SetSRID(ST_MakePoint(longitude,latitude),4326)::geography) STORED);
+CREATE TABLE IF NOT EXISTS alerts (id varchar(36) PRIMARY KEY, created_at timestamptz NOT NULL, updated_at timestamptz NOT NULL, source_id text NOT NULL UNIQUE, latitude double precision NOT NULL, longitude double precision NOT NULL, severity varchar(20) NOT NULL, payload json NOT NULL, expires_at timestamptz, point geography(Point,4326) GENERATED ALWAYS AS (ST_SetSRID(ST_MakePoint(longitude,latitude),4326)::geography) STORED);
+CREATE TABLE IF NOT EXISTS routes (id varchar(36) PRIMARY KEY, created_at timestamptz NOT NULL, updated_at timestamptz NOT NULL, user_id varchar(36) NOT NULL REFERENCES users(id) ON DELETE CASCADE, name varchar(255) NOT NULL, geojson json NOT NULL, analysis json NOT NULL);
+CREATE TABLE IF NOT EXISTS agriculture_reports (id varchar(36) PRIMARY KEY, created_at timestamptz NOT NULL, updated_at timestamptz NOT NULL, user_id varchar(36) NOT NULL REFERENCES users(id) ON DELETE CASCADE, crop varchar(40) NOT NULL, latitude double precision NOT NULL, longitude double precision NOT NULL, report json NOT NULL, point geography(Point,4326) GENERATED ALWAYS AS (ST_SetSRID(ST_MakePoint(longitude,latitude),4326)::geography) STORED);
+CREATE TABLE IF NOT EXISTS chat_history (id varchar(36) PRIMARY KEY, created_at timestamptz NOT NULL, updated_at timestamptz NOT NULL, user_id varchar(36) NOT NULL REFERENCES users(id) ON DELETE CASCADE, conversation_id varchar(36) NOT NULL, role varchar(20) NOT NULL, content json NOT NULL);
+CREATE TABLE IF NOT EXISTS historical_weather (id varchar(36) PRIMARY KEY, created_at timestamptz NOT NULL, updated_at timestamptz NOT NULL, cache_key varchar(128) NOT NULL UNIQUE, latitude double precision NOT NULL, longitude double precision NOT NULL, start_date varchar(10) NOT NULL, end_date varchar(10) NOT NULL, payload json NOT NULL);
+CREATE TABLE IF NOT EXISTS notification_settings (id varchar(36) PRIMARY KEY, created_at timestamptz NOT NULL, updated_at timestamptz NOT NULL, user_id varchar(36) NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE, preferences json NOT NULL);
+CREATE TABLE IF NOT EXISTS push_subscriptions (id varchar(36) PRIMARY KEY, created_at timestamptz NOT NULL, updated_at timestamptz NOT NULL, user_id varchar(36) NOT NULL REFERENCES users(id) ON DELETE CASCADE, token text NOT NULL UNIQUE);
+CREATE TABLE IF NOT EXISTS notification_deliveries (id varchar(36) PRIMARY KEY, created_at timestamptz NOT NULL, updated_at timestamptz NOT NULL, user_id varchar(36) NOT NULL REFERENCES users(id) ON DELETE CASCADE, source_id text NOT NULL, UNIQUE(user_id, source_id));
+CREATE INDEX IF NOT EXISTS ix_locations_user_id ON locations(user_id);
+CREATE INDEX IF NOT EXISTS ix_locations_point ON locations USING GIST(point);
+CREATE INDEX IF NOT EXISTS ix_weather_cache_point ON weather_cache USING GIST(point);
+CREATE INDEX IF NOT EXISTS ix_weather_cache_expires ON weather_cache(expires_at);
+CREATE INDEX IF NOT EXISTS ix_alerts_point ON alerts USING GIST(point);
+CREATE INDEX IF NOT EXISTS ix_agriculture_reports_point ON agriculture_reports USING GIST(point);
+CREATE INDEX IF NOT EXISTS ix_routes_user_id ON routes(user_id);
+CREATE INDEX IF NOT EXISTS ix_agriculture_reports_user_id ON agriculture_reports(user_id);
+CREATE INDEX IF NOT EXISTS ix_chat_history_user_id ON chat_history(user_id);
+CREATE INDEX IF NOT EXISTS ix_chat_history_conversation ON chat_history(conversation_id);
+CREATE INDEX IF NOT EXISTS ix_refresh_sessions_user_id ON refresh_sessions(user_id);
+CREATE INDEX IF NOT EXISTS ix_refresh_sessions_family ON refresh_sessions(family);
+CREATE INDEX IF NOT EXISTS ix_push_subscriptions_user_id ON push_subscriptions(user_id);
+CREATE INDEX IF NOT EXISTS ix_notification_deliveries_user_id ON notification_deliveries(user_id);
+CREATE INDEX IF NOT EXISTS ix_history_location_dates ON historical_weather(latitude, longitude, start_date);
+

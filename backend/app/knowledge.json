@@ -1,0 +1,9 @@
+[
+  {"id":"forecast-limits","title":"Interpreting forecasts","text":"Weather forecasts are model estimates at a grid-cell scale. Local terrain and storms can differ. Uncertainty generally grows with forecast lead time. An unavailable alert feed does not imply no hazards.","source":"https://open-meteo.com/en/docs"},
+  {"id":"irrigation","title":"Crop water demand","text":"Reference evapotranspiration ET0 multiplied by a crop coefficient estimates crop evapotranspiration. Net irrigation also depends on effective precipitation and soil-water storage; field measurements and local agronomic advice are needed.","source":"https://www.fao.org/4/X0490E/x0490e00.htm"},
+  {"id":"air-quality","title":"Air-quality model interpretation","text":"CAMS air-quality fields are numerical model estimates. US AQI bands are 0–50 Good, 51–100 Moderate, 101–150 Unhealthy for sensitive groups, 151–200 Unhealthy, 201–300 Very unhealthy and above 300 Hazardous.","source":"https://www.airnow.gov/aqi/aqi-basics/"},
+  {"id":"flood","title":"Flood information","text":"Never infer a clear road from absent incident data. Rainfall alone cannot establish whether a road is flooded. Use authoritative warnings and local road closures; do not enter floodwater.","source":"https://www.weather.gov/safety/flood"},
+  {"id":"fog","title":"Visibility","text":"Visibility forecasts cannot establish the exact distance to a patch of fog. Reduce speed to match actual conditions; use local traffic advisories. GPS coordinates contain no temperature or visibility observations.","source":"https://www.weather.gov/safety/fog"},
+  {"id":"climate","title":"Climate versus weather","text":"Historical reanalysis combines model information with observations. Climate projections describe statistics under assumptions and are not exact day-to-day forecasts.","source":"https://open-meteo.com/en/docs/climate-api"}
+]
+

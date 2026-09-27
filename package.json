@@ -1,0 +1,13 @@
+{
+  "name": "weathergpt",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "dev": "node scripts/dev.mjs",
+    "build": "npm --prefix frontend run build",
+    "test:frontend": "npm --prefix frontend test",
+    "test:backend": "cd backend && .venv/bin/python -m pytest -q",
+    "test:e2e": "npm --prefix frontend run test:e2e"
+  }
+}

@@ -109,7 +109,7 @@ export async function api<T>(
   const response = await fetch(`${API_BASE}${path}`, {
     ...options,
     headers,
-    credentials: "same-origin",
+    credentials: "include",
     cache: "no-store",
   });
 
@@ -120,20 +120,7 @@ export async function api<T>(
 
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
-
-    const detail = Array.isArray(body.detail)
-      ? body.detail
-          .map(
-            (x: { msg: string; loc: string[] }) =>
-              `${x.loc.slice(1).join(" ")}: ${x.msg}`,
-          )
-          .join("; ")
-      : body.detail;
-
-    throw new ApiError(
-      detail || "Request failed. Please retry.",
-      response.status,
-    );
+    throw new ApiError(body.detail || "Request failed", response.status);
   }
 
   return response.json();

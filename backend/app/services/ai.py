@@ -1,6 +1,7 @@
 import json
 import io
 import wave
+import time
 
 from uuid import uuid4
 from typing import Literal
@@ -62,14 +63,40 @@ User Question:
 """
 
     try:
-        response = client.models.generate_content(
-            model=f"models/{settings.gemini_model}",
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                response_schema=Answer,
-            ),
-        )
+        response = None
+
+        models = [
+            "models/gemini-3.5-flash-lite",
+            "models/gemini-2.5-flash"
+        ]
+
+        for model_name in models:
+            for attempt in range(3):
+                try:
+                    response = client.models.generate_content(
+                        model=model_name,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
+                            response_mime_type="application/jason",
+                            response_schema=Answer,
+                        )
+                    )
+                    break
+                except Exception as e:
+                    if "503" in str(e) and attempt < 2:
+                        time.sleep(2)
+                        continue
+                    if "503" in str(e):
+                        break
+                    raise
+            if response:
+                break
+        if response is None:
+            raise HTTPException(
+                503,
+                "Gemini is temporarily unavailable. Please try again in a few moments."
+            )
+                
 
         ans = response.parsed
 
@@ -91,6 +118,7 @@ User Question:
     except Exception as e:
         raise HTTPException(502, f"Gemini Error: {str(e)}")
 
+
 async def text_to_speech(text: str):
     try:
         response = client.models.generate_content(
@@ -108,10 +136,11 @@ async def text_to_speech(text: str):
             ),
         )
 
-        # Gemini SDK already returns raw PCM bytes
+        # Gemini SDK returns raw PCM bytes
         pcm_data = response.candidates[0].content.parts[0].inline_data.data
 
         wav_buffer = io.BytesIO()
+
         with wave.open(wav_buffer, "wb") as wav:
             wav.setnchannels(1)
             wav.setsampwidth(2)
@@ -122,6 +151,7 @@ async def text_to_speech(text: str):
 
     except Exception as e:
         raise HTTPException(500, f"TTS Error: {str(e)}")
+
 
 async def agricultural_narrative(result: dict) -> str:
     """
@@ -150,7 +180,7 @@ Keep it under 180 words.
 
     try:
         response = client.models.generate_content(
-            model=f"models/{settings.gemini_model}",
+            model="models/gemini-3.5-flash-lite",
             contents=prompt,
         )
 

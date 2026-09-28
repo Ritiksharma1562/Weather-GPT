@@ -139,3 +139,6 @@ class ComparisonRequest(Coordinates):
         if any(o.time.tzinfo is None for o in self.observations):
             raise ValueError("Observation timestamps must include a timezone")
         return self
+
+
+

@@ -543,7 +543,7 @@ async def transcribe(file: UploadFile = File()):
         audio_bytes = await file.read()
 
         response = ai.client.models.generate_content(
-            model="gemini-3.5-flash-lite",
+            model="gemini-3.8-flash",
             contents=[
                 types.Part.from_bytes(
                     data=audio_bytes,
@@ -570,4 +570,7 @@ async def speech(data: SpeechRequest):
             "Content-Disposition": "inline; filename=speech.wav",
         },
     )
+
+
+
 

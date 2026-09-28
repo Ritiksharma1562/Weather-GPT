@@ -28,3 +28,5 @@ async def city_to_coordinates(city: str):
         "longitude": place["longitude"],
         "country": place.get("country", "")
     }
+
+

@@ -89,3 +89,6 @@ async def advice(request: AgricultureRequest) -> dict:
         + ["FAO Irrigation and Drainage Paper 56, generalized crop coefficients"],
         "ai_available": False,
     }
+
+
+

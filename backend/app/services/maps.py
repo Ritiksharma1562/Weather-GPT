@@ -192,3 +192,6 @@ async def nearby_hazards(
         except (HTTPException, ValueError, KeyError, TypeError):
             result["unavailable"].append(layer)
     return result
+
+
+

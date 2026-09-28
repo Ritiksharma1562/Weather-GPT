@@ -117,3 +117,6 @@ def haversine(a: tuple[float, float], b: tuple[float, float]) -> float:
         + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
     )
     return 6371008.8 * 2 * math.asin(min(1, math.sqrt(h)))
+
+
+

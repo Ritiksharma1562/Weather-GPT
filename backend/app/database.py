@@ -26,3 +26,6 @@ async def init_db():
     if settings.environment != "production":
         async with engine.begin() as connection:
             await connection.run_sync(Base.metadata.create_all)
+
+
+

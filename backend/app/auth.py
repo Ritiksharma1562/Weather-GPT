@@ -292,3 +292,6 @@ async def logout(
         await db.commit()
     response.delete_cookie("wg_refresh", path="/")
     return {"ok": True}
+
+
+

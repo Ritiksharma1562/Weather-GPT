@@ -184,3 +184,6 @@ async def analyze(request: RouteRequest) -> dict:
         "max_risk_score": max(s["risk"]["score"] for s in samples),
         "limitations": "Weather sampled about every 5 km at estimated arrival times, using constant average route speed. No live traffic adjustment. Unconnected incident/flood/landslide feeds are unknown, and mapped rest areas are not verified safe.",
     }
+
+
+

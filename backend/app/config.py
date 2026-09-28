@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     jwt_secret_key: str = ""
 
     gemini_api_key: str = "AIzaSyXXXXXXXXXXXXXXXX"
-    gemini_model: str = "gemini-3.5-flash-lite"
+    gemini_model: str = "gemini-3.8-flash"
     gemini_tts_voice: str = "Kore"
 
     gemini_tts_model: str = "gpt-4o-mini-tts"
@@ -76,3 +76,6 @@ def get_settings() -> Settings:
 
 
 settings = get_settings()
+
+
+

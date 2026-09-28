@@ -70,3 +70,6 @@ def meteo_url(kind: str = "forecast") -> tuple[str, dict]:
     return f"https://{host}.open-meteo.com/v1/{path}", (
         {"apikey": settings.open_meteo_api_key} if settings.open_meteo_api_key else {}
     )
+
+
+

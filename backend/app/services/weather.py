@@ -275,3 +275,6 @@ async def weather_points(points: list[tuple[float, float]]) -> list[dict]:
             raise HTTPException(502, "Incomplete route weather response")
         all_rows.extend(locations)
     return all_rows
+
+
+

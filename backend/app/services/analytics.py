@@ -191,3 +191,6 @@ async def projections(latitude: float, longitude: float, start: int, end: int) -
         "source": "EC-Earth3P-HR climate simulation via Open-Meteo",
         "note": "Climate-model scenario estimates; not predictions of weather on a particular day.",
     }
+
+
+

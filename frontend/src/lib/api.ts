@@ -53,14 +53,14 @@ export async function session(): Promise<Session> {
         return acceptSession(await refreshed.json());
       }
 
-      // 401 aur 403 dono me guest session banao
+      // New user → refresh cookie nahi hoti
       if (refreshed.status === 401 || refreshed.status === 403) {
         const guest = await fetch(`${API_BASE}/auth/guest`, {
           method: "POST",
         });
 
         if (!guest.ok) {
-          throw new ApiError("Unable to start a guest session.", guest.status);
+          throw new ApiError("Unable to start guest session.", guest.status);
         }
 
         return acceptSession(await guest.json());

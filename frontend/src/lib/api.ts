@@ -49,31 +49,24 @@ export async function session(): Promise<Session> {
         credentials: "include",
       });
 
-      // Refresh successful
       if (refreshed.ok) {
         return acceptSession(await refreshed.json());
       }
 
-      // 401 ya 403 dono me guest session banao
+      // 401 aur 403 dono me guest session banao
       if (refreshed.status === 401 || refreshed.status === 403) {
         const guest = await fetch(`${API_BASE}/auth/guest`, {
           method: "POST",
         });
 
         if (!guest.ok) {
-          throw new ApiError(
-            "Unable to start a session.",
-            guest.status,
-          );
+          throw new ApiError("Unable to start a guest session.", guest.status);
         }
 
         return acceptSession(await guest.json());
       }
 
-      throw new ApiError(
-        "Session service unavailable.",
-        refreshed.status,
-      );
+      throw new ApiError("Session service unavailable.", refreshed.status);
     };
 
     sessionPromise = refresh().finally(() => {

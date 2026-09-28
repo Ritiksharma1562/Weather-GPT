@@ -7,6 +7,7 @@ import os
 import sys
 from contextlib import asynccontextmanager
 import httpx
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -58,6 +59,8 @@ app.add_middleware(
     allow_origins=[
         "http://127.0.0.1:3001",
         "http://localhost:3001",
+        "https://weather-gpt-fk1e.vercel.app",
+        "https://weather-gpt-fk1e-git-main-ritik-sharma-s-projects.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],

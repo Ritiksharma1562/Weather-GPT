@@ -22,6 +22,20 @@ from .services.cache import cache
 from .services.providers import client
 from .services.risk import assess, haversine
 
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://127.0.0.1:3001",
+        "http://localhost:3001",
+        "https://weather-gpt-fk1e.vercel.app",
+        "https://weather-gpt-fk1e-git-main-ritik-sharma-s-projects.vercel.app",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("httpx").setLevel(logging.WARNING)
 log = logging.getLogger("weathergpt")

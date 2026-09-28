@@ -44,7 +44,7 @@ export function clearSession() {
 export async function session(): Promise<Session> {
   if (!sessionPromise) {
     const refresh = async () => {
-      const refreshed = await fetch(`${API_BASE}/api/auth/refresh`, {
+      const refreshed = await fetch(`${API_BASE}/auth/refresh`, {
         method: "POST",
         credentials: "same-origin",
       });
@@ -60,7 +60,7 @@ export async function session(): Promise<Session> {
         );
       }
 
-      const guest = await fetch(`${API_BASE}/api/auth/guest`, {
+      const guest = await fetch(`${API_BASE}/auth/guest`, {
         method: "POST",
       });
 
@@ -106,7 +106,7 @@ export async function api<T>(
     headers.set("Authorization", `Bearer ${accessToken}`);
   }
 
-  const response = await fetch(`${API_BASE}/api${path}`, {
+  const response = await fetch(`${API_BASE}${path}`, {
     ...options,
     headers,
     credentials: "same-origin",
@@ -149,7 +149,7 @@ export function coords(point: {
 export async function speak(text: string, voice = "coral") {
   const token = localStorage.getItem("access_token");
 
-  const response = await fetch(`${API_BASE}/api/ai/speech`, {
+  const response = await fetch(`${API_BASE}/ai/speech`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

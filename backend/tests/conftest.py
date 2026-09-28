@@ -48,3 +48,5 @@ async def create_user(client, email="weather-test@example.com"):
     )
     assert response.status_code == 201, response.text
     return response.json()
+
+

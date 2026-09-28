@@ -123,3 +123,5 @@ async def test_unconfigured_ai_is_explicit(client):
     )
     assert response.status_code == 503
     assert "OPENAI_API_KEY" in response.json()["detail"]
+
+

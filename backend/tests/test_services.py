@@ -129,3 +129,5 @@ async def test_aqi_failure_preserves_real_weather(monkeypatch):
     assert result["current"]["temperature_2m"] == 20
     assert result["air_quality"] is None
     assert result["availability"]["air_quality"] == "unavailable"
+
+

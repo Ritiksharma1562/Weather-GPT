@@ -46,51 +46,43 @@ export async function session(): Promise<Session> {
     const refresh = async () => {
       const refreshed = await fetch(`${API_BASE}/auth/refresh`, {
         method: "POST",
-        credentials: "same-origin",
+        credentials: "include",
       });
 
+      // Refresh successful
       if (refreshed.ok) {
         return acceptSession(await refreshed.json());
       }
 
-      if (refreshed.status !== 401) {
-        throw new ApiError(
-          "Session service unavailable. Please retry.",
-          refreshed.status,
-        );
+      // 401 ya 403 dono me guest session banao
+      if (refreshed.status === 401 || refreshed.status === 403) {
+        const guest = await fetch(`${API_BASE}/auth/guest`, {
+          method: "POST",
+        });
+
+        if (!guest.ok) {
+          throw new ApiError(
+            "Unable to start a session.",
+            guest.status,
+          );
+        }
+
+        return acceptSession(await guest.json());
       }
 
-      const guest = await fetch(`${API_BASE}/auth/guest`, {
-        method: "POST",
-      });
-
-      if (!guest.ok) {
-        throw new ApiError(
-          "Unable to start a session. Check that the server is running.",
-          guest.status,
-        );
-      }
-
-      return acceptSession(await guest.json());
+      throw new ApiError(
+        "Session service unavailable.",
+        refreshed.status,
+      );
     };
 
-    sessionPromise = (async (): Promise<Session> => {
-      if (typeof navigator !== "undefined" && navigator.locks) {
-        return await navigator.locks.request(
-          "weathergpt-refresh",
-          async () => await refresh(),
-        );
-      }
-
-      return await refresh();
-    })().finally(() => {
+    sessionPromise = refresh().finally(() => {
       sessionPromise = null;
     });
   }
 
   return sessionPromise!;
 }
-
 export async function api<T>(
   path: string,
   options: RequestInit = {},

@@ -1,3 +1,5 @@
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 import type { User } from "./types";
 let accessToken = "";
 let sessionPromise: Promise<Session> | null = null;
@@ -27,7 +29,7 @@ export function clearSession() {
 export async function session(): Promise<Session> {
   if (!sessionPromise) {
     const refresh = async () => {
-      const refreshed = await fetch("/api/auth/refresh", {
+      const refreshed = await fetch(`${API_BASE}/api/auth/refresh`, {
         method: "POST",
         credentials: "same-origin",
       });
@@ -37,7 +39,7 @@ export async function session(): Promise<Session> {
           "Session service unavailable. Please retry.",
           refreshed.status,
         );
-      const guest = await fetch("/api/auth/guest", { method: "POST" });
+      const guest = await fetch(`${API_BASE}/api/auth/guest`,) { method: "POST" };
       if (!guest.ok)
         throw new ApiError(
           "Unable to start a session. Check that the server is running.",
@@ -67,7 +69,7 @@ export async function api<T>(
   if (!(options.body instanceof FormData) && options.body)
     headers.set("Content-Type", "application/json");
   if (accessToken) headers.set("Authorization", `Bearer ${accessToken}`);
-  const response = await fetch(`/api${path}`, {
+  const response = await fetch(`${API_BASE}/api${path}`, {
     ...options,
     headers,
     credentials: "same-origin",
@@ -101,7 +103,7 @@ export function coords(point: { latitude: number; longitude: number }) {
 export async function speak(text: string, voice = "coral") {
   const token = localStorage.getItem("access_token");
 
-  const response = await fetch("/api/ai/speech", {
+  const response = await fetch(`${API_BASE}/api/ai/speech`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     redis_url: str = ""
     jwt_secret_key: str = ""
 
-    gemini_api_key: str = 
+    gemini_api_key: str = "AIzaSyXXXXXXXXXXXXXXXX"
     gemini_model: str = "gemini-3.5-flash-lites"
     gemini_tts_voice: str = "Kore"
 

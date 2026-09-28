@@ -94,7 +94,7 @@ User Question:
 async def text_to_speech(text: str):
     try:
         response = client.models.generate_content(
-            model="models/gemini-2.5-flash-preview-tts",
+            model="models/gemini-3.5-flash-preview-tts",
             contents=text,
             config=types.GenerateContentConfig(
                 response_modalities=["AUDIO"],

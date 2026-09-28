@@ -90,12 +90,7 @@ async def principal(
 
     # Allow guest access instead of 401
     if not credentials:
-        return Principal(
-            id="guest",
-            email=None,
-            display_name="Guest",
-            guest=True,
-        )
+        return Principal(id="guest", guest=True)
 
     return await authenticate(credentials.credentials, db)
 
@@ -150,8 +145,17 @@ async def create_session(
 
 
 def same_origin(request: Request):
-    if request.headers.get("origin") not in settings.origins:
-        raise HTTPException(403, "A trusted frontend origin is required")
+    origin = request.headers.get("origin", "")
+
+    # Exact allowed origins
+    if origin in settings.origins:
+        return
+
+    # Allow all Vercel preview deployments of the frontend
+    if origin.startswith("https://weather-gpt-fk1e-") and origin.endswith(".vercel.app"):
+        return
+
+    raise HTTPException(403, "A trusted frontend origin is required")
 
 
 @router.post("/signup", status_code=201)

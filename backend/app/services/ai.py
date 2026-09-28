@@ -68,8 +68,8 @@ User Question:
 
         # Primary + Fallback models
         models = [
-            "models/gemini-3.8-flash",
-            "models/gemini-3.8-flash",
+            "gemini-3.5-flash",
+            "gemini-3.8-flash",
         ]
 
         for model_name in models:
@@ -132,7 +132,7 @@ User Question:
 async def text_to_speech(text: str):
     try:
         response = client.models.generate_content(
-            model="models/gemini-3.8-flash-preview-tts",
+            model="gemini-3.8-flash-preview-tts",
             contents=text,
             config=types.GenerateContentConfig(
                 response_modalities=["AUDIO"],
@@ -186,7 +186,7 @@ Keep it under 180 words.
 
     try:
         response = client.models.generate_content(
-            model="models/gemini-3.8-flash",
+            model="gemini-3.8-flash",
             contents=prompt,
         )
 

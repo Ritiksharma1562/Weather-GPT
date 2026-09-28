@@ -7,7 +7,6 @@ import os
 import sys
 from contextlib import asynccontextmanager
 import httpx
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -53,18 +52,6 @@ app = FastAPI(
     version="1.0.0",
     description="Live weather, climate intelligence, account data, GIS, route analysis and grounded AI. All measurements are returned in SI/display units described in each response.",
     lifespan=lifespan,
-)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://127.0.0.1:3001",
-        "http://localhost:3001",
-        "https://weather-gpt-fk1e.vercel.app",
-        "https://weather-gpt-fk1e-git-main-ritik-sharma-s-projects.vercel.app",
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
 )
 from fastapi.responses import JSONResponse
 

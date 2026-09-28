@@ -1,3 +1,4 @@
+
 import json
 import io
 import wave
@@ -65,9 +66,10 @@ User Question:
     try:
         response = None
 
+        # Primary + Fallback models
         models = [
             "models/gemini-3.5-flash-lite",
-            "models/gemini-2.5-flash"
+            "models/gemini-2.5-flash",
         ]
 
         for model_name in models:
@@ -77,26 +79,31 @@ User Question:
                         model=model_name,
                         contents=prompt,
                         config=types.GenerateContentConfig(
-                            response_mime_type="application/jason",
+                            response_mime_type="application/json",
                             response_schema=Answer,
-                        )
+                        ),
                     )
                     break
+
                 except Exception as e:
+                    # Retry only for temporary overload
                     if "503" in str(e) and attempt < 2:
                         time.sleep(2)
                         continue
+
                     if "503" in str(e):
                         break
+
                     raise
-            if response:
+
+            if response is not None:
                 break
+
         if response is None:
             raise HTTPException(
                 503,
-                "Gemini is temporarily unavailable. Please try again in a few moments."
+                "Gemini is temporarily unavailable. Please try again in a few moments.",
             )
-                
 
         ans = response.parsed
 
@@ -115,8 +122,11 @@ User Question:
             "confidence_note": "Generated using Gemini",
         }
 
+    except HTTPException:
+        raise
+
     except Exception as e:
-        raise HTTPException(502, f"Gemini Error: {str(e)}")
+        raise HTTPException(500, f"Gemini Error: {str(e)}")
 
 
 async def text_to_speech(text: str):
@@ -136,7 +146,6 @@ async def text_to_speech(text: str):
             ),
         )
 
-        # Gemini SDK returns raw PCM bytes
         pcm_data = response.candidates[0].content.parts[0].inline_data.data
 
         wav_buffer = io.BytesIO()
@@ -154,9 +163,6 @@ async def text_to_speech(text: str):
 
 
 async def agricultural_narrative(result: dict) -> str:
-    """
-    Generate AI explanation for Farmer Mode
-    """
     if not settings.gemini_api_key:
         return "AI agricultural advice is unavailable."
 

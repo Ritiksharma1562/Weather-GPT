@@ -57,12 +57,7 @@ app = FastAPI(
 from fastapi.middleware.cors import CORSMiddleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://127.0.0.1:3001",
-        "http://localhost:3001",
-        "https://weather-gpt-fk1e.vercel.app",
-        "https://weather-gpt-fk1e-git-main-ritik-sharma-s-projects.vercel.app",
-    ],
+    allow_origin_regex=r"https://weather-gpt.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
